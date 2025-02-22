@@ -13,9 +13,9 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Hear Me Out",
+  title: "ReMIND",
   description:
-    "Get your thoughts and feelings off your chest with the response you need.",
+    "Help Your Loved Ones in fighting Demenita. You wont want them to forget you, do you?",
 };
 
 const geistSans = Geist({
@@ -40,8 +40,8 @@ export default function RootLayout({
           <main className="flex-1 flex flex-col">
             <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
               <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-                <div className="flex gap-5 items-center font-semibold">
-                  <Link href={"/"}>I Will Listen</Link>
+                <div className="flex gap-5 items-center font-semibold text-l">
+                  <Link href={"/"}>ReMIND</Link>
                 </div>
                 {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
               </div>
