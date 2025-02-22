@@ -4,7 +4,7 @@ import Image from "next/image";
 export default async function Home() {
   return (
     <>
-      <main className="flex-1 flex flex-col gap-1">
+      <main className="flex-1 flex flex-col gap-5">
         <div className="flex flex-col gap-6">
           <h1 className="text-6xl font-bold">ReMIND</h1>
           <p className="text-xl text-gray-600">
@@ -12,9 +12,11 @@ export default async function Home() {
           </p>
           <Image
             src="/istockphoto-1336974187-612x612.jpg"
-            width="500"
-            height="500"
-            alt="Dementia"
+            alt="Dementia Awareness"
+            width={0}
+            height={0}
+            sizes="100vw"
+            className="w-full md:w-2/3 mx-auto h-auto rounded-lg"
           />
         </div>
         <div className="flex flex-col gap-6">
