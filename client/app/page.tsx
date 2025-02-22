@@ -1,6 +1,4 @@
 import AudioRecorder from "@/audio-recorder";
-import Hero from "@/components/hero";
-import Dementia from "@/app/istockphoto-1336974187-612x612.jpg";
 import Image from "next/image";
 
 export default async function Home() {
