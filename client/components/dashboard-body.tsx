@@ -16,20 +16,13 @@ interface DashboardBodyProps {
   agents: Agent[];
 }
 
-const moodEmojis: { [key: string]: string } = {
-  angry: "😠",
-  happy: "😊",
-  sad: "😢",
-  // Add more moods and emojis as needed
-};
-
 export function DashboardBody({ agents }: DashboardBodyProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <Card className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
         <CardContent className="flex flex-col items-center justify-center h-full min-h-[200px]">
           <Plus className="w-12 h-12 text-gray-400 mb-2" />
-          <p className="text-lg font-medium">Something Happened!</p>
+          <p className="text-lg font-medium">Set New Call</p>
         </CardContent>
       </Card>
       {agents.map((agent) => (
@@ -38,9 +31,7 @@ export function DashboardBody({ agents }: DashboardBodyProps) {
           className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
         >
           <CardHeader>
-            <CardTitle>
-              {agent.title} {moodEmojis[agent.talk_mood] || "🤔"}
-            </CardTitle>
+            <CardTitle>{agent.title}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
