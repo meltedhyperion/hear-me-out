@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { formAction } from "@/app/actions";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import AudioRecorder from "@/audio-recorder";
 import {
   Select,
   SelectContent,
@@ -17,7 +18,6 @@ import {
 } from "@/components/ui/select";
 
 export default function Form() {
-  const VOICE_OPTIONS = ["Munni", "Papa", "Mummy", "Daddy"];
   const REPEAT_OPTIONS = ["30min", "1hr", "3hr", "6hr", "12hr", "24hr"];
   const [formData, setFormData] = useState({
     title: "",
@@ -61,6 +61,12 @@ export default function Form() {
       questionnaires: prev.questionnaires.filter((_, i) => i !== index),
     }));
   };
+
+  const handleVoiceGenerated = (audioId: string) => {
+    console.log("Voice generated:", audioId);
+    setFormData((prev) => ({ ...prev, voice: audioId }));
+  };
+
   const router = useRouter();
   return (
     <div className="container mx-auto py-8 max-w-2xl">
@@ -129,23 +135,17 @@ export default function Form() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Voice
+                Add Caller's Voice
               </label>
-              <Select
-                value={formData.voice}
-                onValueChange={(value) => handleSelectChange("voice", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select caller voice" />
-                </SelectTrigger>
-                <SelectContent>
-                  {VOICE_OPTIONS.map((v) => (
-                    <SelectItem key={v} value={v}>
-                      {v}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <AudioRecorder
+                name={formData.callerName}
+                onVoiceGenerated={handleVoiceGenerated}
+              />
+              {formData.voice && (
+                <p className="text-sm font-bold text-green-600 mt-1 text-center">
+                  Voice uploaded
+                </p>
+              )}
             </div>
 
             <div>
