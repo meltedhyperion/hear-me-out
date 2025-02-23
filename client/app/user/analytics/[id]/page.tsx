@@ -1,19 +1,7 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { useRouter, useParams } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+import { AnalyticsBody } from "@/components/analytics-body";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
+import { isCallCompleted } from "@/utils/utils";
 
 const mockAgent = {
   id: "1",
@@ -37,123 +25,40 @@ const mockChartData = [
   { slot: 5, correctAnswers: 4 },
 ];
 
-const determineCondition = (data) => {
-  const trend = data[data.length - 1].correctAnswers - data[0].correctAnswers;
-  if (trend > 0) return "Improving";
-  if (trend < 0) return "Deteriorating";
-  return "Stable";
-};
+export default async function AnalyticsPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
 
-export default function AgentAnalyticsPage() {
-  const router = useRouter();
-  const params = useParams();
-  const [agent, setAgent] = useState(null);
-  const [chartData, setChartData] = useState([]);
-  const [condition, setCondition] = useState("Loading...");
+  if (userError || !user) {
+    return redirect("/sign-in");
+  }
 
-  useEffect(() => {
-    if (params?.id) {
-      setAgent(mockAgent);
-      setChartData(mockChartData);
-      setCondition(determineCondition(mockChartData));
-    }
-  }, [params]);
+  const { data: conversations, error: conversationsError } = await supabase
+    .from("patient_schedules")
+    .select("*")
+    .ilike("email", user.email || "")
+    .eq("id", params.id);
+  if (conversationsError) {
+    console.error("Error fetching conversations:", conversationsError.message);
+  }
+
+  const agent = conversations?.length ? conversations[0] : mockAgent;
+  const chartData = mockChartData;
 
   return (
-    <div className="container mx-auto py-8">
-      <Button onClick={() => router.push("/user")} className="mb-4">
-        Back to Dashboard
-      </Button>
-
-      {agent ? (
-        <>
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle>{agent.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>
-                <strong>Caller:</strong> {agent.caller_name} (
-                {agent.relation_to_patient})
-              </p>
-              <p>
-                <strong>Created on:</strong>{" "}
-                {new Date(agent.created_on).toLocaleDateString()}
-              </p>
-              <p>
-                <strong>Voice:</strong> {agent.voice}
-              </p>
-              <p>
-                <strong>Call Number:</strong> {agent.call_number}
-              </p>
-              <p>
-                <strong>Repeat Interval:</strong> {agent.repeat}
-              </p>
-              <p>
-                <strong>Number of Repeats:</strong> {agent.times}
-              </p>
-              <p>
-                <strong>Context:</strong> {agent.situation}
-              </p>
-              <p>
-                <strong>Status:</strong>{" "}
-                {agent.isCompleted ? "Completed" : "In Progress"}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle>Answer Performance</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[400px]">
-                <ResponsiveContainer
-                  width="100%"
-                  height={300}
-                  className="min-w-[250px]"
-                >
-                  <LineChart
-                    data={chartData}
-                    margin={{ top: 10, right: 10, left: -20, bottom: 10 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="slot" tick={{ fontSize: 12 }} />
-                    <YAxis tick={{ fontSize: 12 }} />
-                    <Tooltip />
-                    <Legend />
-                    <Line
-                      type="monotone"
-                      dataKey="correctAnswers"
-                      stroke="#8884d8"
-                      activeDot={{ r: 8 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Patient Condition</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">
-                {condition === "Improving" && "🟢 "}
-                {condition === "Stable" && "🟠 "}
-                {condition === "Deteriorating" && "🔴 "}
-                {condition}
-              </p>
-              <p>
-                Based on the number of correct answers over time, the patient's
-                condition appears to be {condition.toLowerCase()}.
-              </p>
-            </CardContent>
-          </Card>
-        </>
+    <div className="flex-1 w-full flex flex-col">
+      <h1 className="text-3xl font-bold mb-6">Agent Analytics</h1>
+      {agent && chartData ? (
+        <AnalyticsBody agent={agent} chartData={chartData} />
       ) : (
-        <p>Loading agent data...</p>
+        <p>Loading Call analytics...</p>
       )}
     </div>
   );
