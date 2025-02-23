@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,12 +14,14 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
+import { createClient } from "@supabase/supabase-js";
 
 const VOICE_OPTIONS = ["Voice 1", "Voice 2", "Voice 3"];
 const REPEAT_OPTIONS = ["30min", "1hr", "3hr", "6hr", "12hr", "1day"];
 
 export default function AddAgentPage() {
   const router = useRouter();
+  const [supabase, setSupabase] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
     callerName: "",
@@ -31,6 +33,14 @@ export default function AddAgentPage() {
     callNumber: "",
     questionnaires: [{ question: "", answer: "" }],
   });
+
+  useEffect(() => {
+    const supabaseClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    );
+    setSupabase(supabaseClient);
+  }, []);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -63,9 +73,30 @@ export default function AddAgentPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    if (!supabase) return;
+
+    const { data, error } = await supabase.from("patient_schedules").insert([
+      {
+        title: formData.title,
+        caller_name: formData.callerName,
+        relation_to_patient: formData.relationToPatient,
+        voice: formData.voice,
+        situation: formData.context,
+        schedule: formData.repeat,
+        repeatitions: parseInt(formData.noOfRepeats),
+        call_number: formData.callNumber,
+        questionaires: formData.questionnaires,
+        is_completed: false,
+      },
+    ]);
+
+    if (error) {
+      console.error("Error inserting new call therapy:", error);
+    } else {
+      console.log("New call therapy scheduled:", data);
+    }
   };
 
   return (
