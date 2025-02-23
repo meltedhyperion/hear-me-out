@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Loader2 } from "lucide-react"; // Import Loader2 for the spinner
+import { Plus, Loader2 } from "lucide-react";
 
 interface Agent {
   id: string;
@@ -28,7 +28,9 @@ export function DashboardBody({ agents }: DashboardBodyProps) {
     setLoading(true);
     router.push("/protected/schedule-new-call");
   };
-
+  const handleCallAnalyticsClick = (id: string) => {
+    router.push("/protected/analytics/" + id);
+  };
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <Card
@@ -50,6 +52,7 @@ export function DashboardBody({ agents }: DashboardBodyProps) {
       {agents.map((agent) => (
         <Card
           key={agent.id}
+          onClick={() => handleCallAnalyticsClick(agent.id)}
           className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
         >
           <CardHeader>
