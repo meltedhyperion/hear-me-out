@@ -29,8 +29,6 @@ export default async function Home() {
             just fate. With care, it can be slowed.
           </p>
         </div>
-
-        <AudioRecorder />
       </main>
     </>
   );
