@@ -14,14 +14,16 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
+import { createClient } from "@/utils/supabase/client";
+
+const supabase = createClient();
 
 const VOICE_OPTIONS = ["Voice 1", "Voice 2", "Voice 3"];
 const REPEAT_OPTIONS = ["30min", "1hr", "3hr", "6hr", "12hr", "1day"];
 
 export default function AddAgentPage() {
   const router = useRouter();
-  const [supabase, setSupabase] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
     callerName: "",
@@ -33,13 +35,22 @@ export default function AddAgentPage() {
     callNumber: "",
     questionnaires: [{ question: "", answer: "" }],
   });
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const supabaseClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    );
-    setSupabase(supabaseClient);
+    const fetchUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (error) {
+        console.error("Error fetching user:", error);
+        setLoading(false);
+        return;
+      }
+      setUser(data);
+      setLoading(false);
+    };
+
+    fetchUser();
   }, []);
 
   const handleChange = (e) => {
@@ -75,10 +86,11 @@ export default function AddAgentPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!supabase) return;
+    if (!supabase || !user) return;
 
     const { data, error } = await supabase.from("patient_schedules").insert([
       {
+        email: user.email,
         title: formData.title,
         caller_name: formData.callerName,
         relation_to_patient: formData.relationToPatient,
@@ -93,15 +105,22 @@ export default function AddAgentPage() {
     ]);
 
     if (error) {
-      console.error("Error inserting new call therapy:", error);
+      console.error("Error inserting new call :", error);
     } else {
-      console.log("New call therapy scheduled:", data);
+      console.log("New call scheduled:", data);
     }
   };
 
+  if (loading) {
+    return <div>Loading user data...</div>;
+  }
+
+  if (!user) {
+    return <div>No user found. Please log in.</div>;
+  }
+
   return (
     <div className="container mx-auto py-8 max-w-2xl">
-      {/* Back Button */}
       <div className="mb-4">
         <Button
           variant="outline"
