@@ -61,7 +61,7 @@ export default function Form() {
       questionnaires: prev.questionnaires.filter((_, i) => i !== index),
     }));
   };
-
+  const router = useRouter();
   return (
     <div className="container mx-auto py-8 max-w-2xl">
       {/* Back Button */}
@@ -71,7 +71,10 @@ export default function Form() {
           onClick={() => router.push("/user")}
           className="flex items-center space-x-2"
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
+          <ArrowLeft
+            onClick={() => router.push("/user")}
+            className="w-4 h-4 mr-2"
+          />
           Back to Dashboard
         </Button>
       </div>
