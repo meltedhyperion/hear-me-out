@@ -4,21 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Loader2 } from "lucide-react";
-
-interface Agent {
-  id: string;
-  title: string;
-  caller_name: string;
-  created_on: string;
-  talk_mood: string;
-  situation: string;
-  language: string;
-  voice: string;
-  patient_relation: string;
-  call_number: string;
-  questionnaires: { question: string; answer: string }[];
-  is_completed: boolean;
-}
+import { Agent, isCallCompleted } from "@/utils/utils";
 
 interface DashboardBodyProps {
   agents: Agent[];
@@ -66,18 +52,21 @@ export function DashboardBody({ agents }: DashboardBodyProps) {
           </CardHeader>
           <CardContent className="space-y-1 text-gray-600 dark:text-gray-300">
             <p className="text-sm">📞 Caller: {agent.caller_name}</p>
-            <p className="text-sm">📅 Created: {agent.created_on}</p>
+            <p className="text-sm">
+              📅 Created: {new Date(agent.created_at).toLocaleDateString()}
+            </p>
             <p className="text-sm">🔊 Voice: {agent.voice}</p>
             <p className="text-sm line-clamp-2">
               📖 Context: {agent.situation}
             </p>
-            <p className="text-sm">🔁 Repeats: {agent.talk_mood}</p>
+            <p className="text-sm">📅 Schedule: {agent.schedule}</p>
+            <p className="text-sm">🔁 Repeats: {agent.repeatitions}</p>
             <p className="text-sm">
-              🧑‍🤝‍🧑 Patient Relation: {agent.patient_relation}
+              🧑‍🤝‍🧑 Patient Relation: {agent.relation_to_patient}
             </p>
             <p className="text-sm">📞 Call Number: {agent.call_number}</p>
             <p className="text-sm">
-              ✅ Completed: {agent.is_completed ? "Yes" : "No"}
+              ✅ Completed: {isCallCompleted(agent) ? "Yes" : "In Process"}
             </p>
           </CardContent>
         </Card>

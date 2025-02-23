@@ -19,7 +19,6 @@ export default async function ProtectedPage() {
   if (conversationsError) {
     console.error("Error fetching conversations:", conversationsError.message);
   }
-
   return (
     <div className="flex-1 w-full flex flex-col gap-12">
       <h1 className="text-3xl font-bold mb-6">Patient Scheduled Calls</h1>
