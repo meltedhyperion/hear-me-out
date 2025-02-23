@@ -25,11 +25,26 @@ export default async function ProtectedPage() {
     {
       id: "1",
       title: "A memory lane to our trip to Kerela",
-      person_name: "Munni",
+      caller_name: "Munni",
+      relation_to_patient: "Daugther",
       created_on: "19-02-2023",
       situation:
         "I am calling my mother to remind her about our trip to Kerela. We went in the year 2009. We did horseback Riding, visited the tea gardens, and had a lot of fun. We stayed at a resort. Aryan and Aadi played and enjoyed a lot. Pooja got bit by a snake and had to rush to hospital",
-      voice: "Henry",
+      voice: "Munni",
+      call_number: "+918294107355",
+      isCompleted: false,
+      questionaires: [
+        {
+          question: "We went to which place in Kerela?",
+          answer: "Tea Gardens",
+        },
+        {
+          question: "Who got bit by a snake?",
+          answer: "Pooja",
+        },
+      ],
+      repeat: "30min",
+      times: 5,
     },
     {
       id: "2",

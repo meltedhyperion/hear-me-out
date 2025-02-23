@@ -74,7 +74,7 @@ export default function AddAgentPage() {
       <div className="mb-4">
         <Button
           variant="outline"
-          onClick={() => router.push("/protected")}
+          onClick={() => router.push("/user")}
           className="flex items-center space-x-2"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />

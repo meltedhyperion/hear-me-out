@@ -26,10 +26,10 @@ export function DashboardBody({ agents }: DashboardBodyProps) {
 
   const handleNewCallClick = () => {
     setLoading(true);
-    router.push("/protected/schedule-new-call");
+    router.push("/user/schedule-new-call");
   };
   const handleCallAnalyticsClick = (id: string) => {
-    router.push("/protected/analytics/" + id);
+    router.push("/user/analytics/" + id);
   };
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

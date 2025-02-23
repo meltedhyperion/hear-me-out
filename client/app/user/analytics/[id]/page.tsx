@@ -61,7 +61,7 @@ export default function AgentAnalyticsPage() {
 
   return (
     <div className="container mx-auto py-8">
-      <Button onClick={() => router.push("/protected")} className="mb-4">
+      <Button onClick={() => router.push("/user")} className="mb-4">
         Back to Dashboard
       </Button>
 
