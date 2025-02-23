@@ -89,11 +89,29 @@ export default function AddAgentPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {[
-              { label: "Title", id: "title" },
-              { label: "Caller Name", id: "callerName" },
-              { label: "Relation to Patient", id: "relationToPatient" },
-              { label: "Call Number", id: "callNumber", type: "tel" },
-              { label: "Number of Repeats", id: "noOfRepeats", type: "number" },
+              { label: "Title", id: "title", placeholder: "Title" },
+              {
+                label: "Caller Name",
+                id: "callerName",
+                placeholder: "Name of the Caller",
+              },
+              {
+                label: "Relation to Patient",
+                id: "relationToPatient",
+                placeholder: "Their Relation to the Patient",
+              },
+              {
+                label: "Call Number",
+                id: "callNumber",
+                type: "tel",
+                placeholder: "Phone Number to Call",
+              },
+              {
+                label: "Number of Repeats",
+                id: "noOfRepeats",
+                type: "number",
+                placeholder: "Number of times to repeat",
+              },
             ].map(({ label, id, type }) => (
               <div key={id}>
                 <label
@@ -121,7 +139,7 @@ export default function AddAgentPage() {
                 onValueChange={(value) => handleSelectChange("voice", value)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a voice" />
+                  <SelectValue placeholder="Select caller voice" />
                 </SelectTrigger>
                 <SelectContent>
                   {VOICE_OPTIONS.map((v) => (
@@ -160,6 +178,7 @@ export default function AddAgentPage() {
               </label>
               <Textarea
                 id="context"
+                placeholder="Context of the call and caller"
                 value={formData.context}
                 onChange={handleChange}
                 required
@@ -173,7 +192,7 @@ export default function AddAgentPage() {
               {formData.questionnaires.map((q, index) => (
                 <div key={index} className="flex space-x-2 mt-2">
                   <Input
-                    placeholder="Question"
+                    placeholder="Question to ask"
                     value={q.question}
                     onChange={(e) =>
                       handleQuestionnaireChange(
@@ -185,7 +204,7 @@ export default function AddAgentPage() {
                     required
                   />
                   <Input
-                    placeholder="Answer"
+                    placeholder="Answer to expect"
                     value={q.answer}
                     onChange={(e) =>
                       handleQuestionnaireChange(index, "answer", e.target.value)
