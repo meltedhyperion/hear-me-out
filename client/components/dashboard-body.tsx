@@ -68,7 +68,9 @@ export function DashboardBody({ agents }: DashboardBodyProps) {
             <p className="text-sm">📞 Caller: {agent.caller_name}</p>
             <p className="text-sm">📅 Created: {agent.created_on}</p>
             <p className="text-sm">🔊 Voice: {agent.voice}</p>
-            <p className="text-sm line-clamp-2">📖 {agent.situation}</p>
+            <p className="text-sm line-clamp-2">
+              📖 Context: {agent.situation}
+            </p>
             <p className="text-sm">🔁 Repeats: {agent.talk_mood}</p>
             <p className="text-sm">
               🧑‍🤝‍🧑 Patient Relation: {agent.patient_relation}
