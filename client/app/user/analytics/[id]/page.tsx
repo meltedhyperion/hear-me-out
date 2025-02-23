@@ -1,7 +1,6 @@
 import { AnalyticsBody } from "@/components/analytics-body";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { isCallCompleted } from "@/utils/utils";
 
 const mockAgent = {
   id: "1",
@@ -27,8 +26,10 @@ const mockChartData = [
 
 export default async function AnalyticsPage({
   params,
+  searchParams,
 }: {
   params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const supabase = await createClient();
   const {
@@ -45,6 +46,7 @@ export default async function AnalyticsPage({
     .select("*")
     .ilike("email", user.email || "")
     .eq("id", params.id);
+
   if (conversationsError) {
     console.error("Error fetching conversations:", conversationsError.message);
   }
