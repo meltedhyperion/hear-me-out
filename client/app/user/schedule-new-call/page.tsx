@@ -1,9 +1,8 @@
 import Form from "@/components/add-call-form";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import { cookies } from "next/headers";
 export default async function AddAgentPage() {
-  const supabase = await createClient(cookies());
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

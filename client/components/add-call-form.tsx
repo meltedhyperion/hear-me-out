@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { formAction } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import AudioRecorder from "@/audio-recorder";
@@ -19,6 +19,7 @@ import {
 
 export default function Form() {
   const REPEAT_OPTIONS = ["30min", "1hr", "3hr", "6hr", "12hr", "24hr"];
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     callerName: "",
@@ -68,6 +69,12 @@ export default function Form() {
   };
 
   const router = useRouter();
+
+  // When the form is submitted, set isLoading to true.
+  const handleSubmit = () => {
+    setIsLoading(true);
+  };
+
   return (
     <div className="container mx-auto py-8 max-w-2xl">
       {/* Back Button */}
@@ -77,10 +84,7 @@ export default function Form() {
           onClick={() => router.push("/user")}
           className="flex items-center space-x-2"
         >
-          <ArrowLeft
-            onClick={() => router.push("/user")}
-            className="w-4 h-4 mr-2"
-          />
+          <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Dashboard
         </Button>
       </div>
@@ -90,7 +94,11 @@ export default function Form() {
           <CardTitle>Set New Call Therapy</CardTitle>
         </CardHeader>
         <CardContent>
-          <form action={formAction} className="space-y-4">
+          <form
+            action={formAction}
+            className="space-y-4"
+            onSubmit={handleSubmit}
+          >
             {[
               { label: "Title", id: "title", placeholder: "Title" },
               {
@@ -115,7 +123,7 @@ export default function Form() {
                 type: "number",
                 placeholder: "Number of times to repeat",
               },
-            ].map(({ label, id, type }) => (
+            ].map(({ label, id, type, placeholder }) => (
               <div key={id}>
                 <label
                   htmlFor={id}
@@ -125,7 +133,9 @@ export default function Form() {
                 </label>
                 <Input
                   id={id}
+                  name={id}
                   type={type || "text"}
+                  placeholder={placeholder}
                   value={formData[id]}
                   onChange={handleChange}
                   required
@@ -146,6 +156,8 @@ export default function Form() {
                   Voice uploaded
                 </p>
               )}
+              {/* Hidden input to include voice data in the form submission */}
+              <input type="hidden" name="voice" value={formData.voice} />
             </div>
 
             <div>
@@ -167,6 +179,8 @@ export default function Form() {
                   ))}
                 </SelectContent>
               </Select>
+              {/* Hidden input to include repeat value */}
+              <input type="hidden" name="repeat" value={formData.repeat} />
             </div>
 
             <div>
@@ -175,6 +189,7 @@ export default function Form() {
               </label>
               <Textarea
                 id="context"
+                name="context"
                 placeholder="Context of the call and caller"
                 value={formData.context}
                 onChange={handleChange}
@@ -199,6 +214,7 @@ export default function Form() {
                       )
                     }
                     required
+                    name={`question-${index}`}
                   />
                   <Input
                     placeholder="Answer to expect"
@@ -207,6 +223,7 @@ export default function Form() {
                       handleQuestionnaireChange(index, "answer", e.target.value)
                     }
                     required
+                    name={`answer-${index}`}
                   />
                   <Button
                     type="button"
@@ -224,9 +241,24 @@ export default function Form() {
               >
                 Add Question
               </Button>
+              {/* Hidden input to submit questionnaires as JSON */}
+              <input
+                type="hidden"
+                name="questionnaires"
+                value={JSON.stringify(formData.questionnaires)}
+              />
             </div>
 
-            <Button type="submit">Save Call</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                "Save Call"
+              )}
+            </Button>
           </form>
         </CardContent>
       </Card>
