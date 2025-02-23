@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus } from "lucide-react";
+import { Plus, Loader2 } from "lucide-react"; // Import Loader2 for the spinner
 
 interface Agent {
   id: string;
@@ -21,16 +22,28 @@ interface DashboardBodyProps {
 
 export function DashboardBody({ agents }: DashboardBodyProps) {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const handleNewCallClick = () => {
+    setLoading(true);
+    router.push("/protected/schedule-new-call");
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <Card
-        onClick={() => router.push("/protected/schedule-new-call")}
+        onClick={handleNewCallClick}
         className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
       >
         <CardContent className="flex flex-col items-center justify-center h-full min-h-[200px]">
-          <Plus className="w-12 h-12 text-gray-400 mb-2" />
-          <p className="text-lg font-medium">Set New Call</p>
+          {loading ? (
+            <Loader2 className="w-12 h-12 text-gray-400 animate-spin mb-2" />
+          ) : (
+            <Plus className="w-12 h-12 text-gray-400 mb-2" />
+          )}
+          <p className="text-lg font-medium">
+            {loading ? "Loading..." : "Set New Call"}
+          </p>
         </CardContent>
       </Card>
 
